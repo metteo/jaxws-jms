@@ -4,9 +4,7 @@
 
 package com.sun.xml.ws.transport.jms;
 
-import com.sun.xml.ws.spi.runtime.WSConnection;
-import java.net.HttpURLConnection;
-import javax.servlet.http.HttpServletResponse;
+import com.sun.xml.ws.transport.http.WSHTTPConnection;
 
 /**
  * @author Alexey Stashok
@@ -16,7 +14,7 @@ public class JMSConstants {
     public static final String CONTENT_TYPE_PROPERTY = "CONTENT_TYPE";
 
     public static final int ERROR_STATUS_LIMIT = 400;
-    public static final int ONEWAY = WSConnection.ONEWAY;
+    public static final int ONEWAY = WSHTTPConnection.ONEWAY;
     public static final int ERROR_INTERNAL = 500;
     
     public static final String TARGET_URI_PROPERTY = "TARGET_URI";

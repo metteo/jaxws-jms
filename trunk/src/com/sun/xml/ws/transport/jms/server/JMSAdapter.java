@@ -4,7 +4,6 @@
 package com.sun.xml.ws.transport.jms.server;
 
 import com.sun.xml.ws.api.message.Packet;
-import com.sun.xml.ws.spi.runtime.WSConnection;
 import com.sun.xml.ws.transport.http.DeploymentDescriptorParser.AdapterFactory;
 
 import com.sun.xml.ws.api.server.Adapter;
@@ -86,7 +85,7 @@ public class JMSAdapter extends Adapter<JMSAdapter.JMSToolkit> {
                 headers.put(JMSConstants.CONTENT_TYPE_PROPERTY, ct);
                 con.setResponseHeaders(headers);
                 if (packet.getMessage() == null) {
-                    con.setStatus(WSConnection.ONEWAY);
+                    con.setStatus(JMSConstants.ONEWAY);
                 } else {
                     encoder.encode(packet, con.getOutputStream());
                 }
