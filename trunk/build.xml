@@ -2,7 +2,7 @@
 <!-- You may freely edit this file. See commented blocks below for -->
 <!-- some examples of how to customize the build. -->
 <!-- (If you delete it and reopen the project it will be recreated.) -->
-<project name="jms-ws-transport" default="default" basedir=".">
+<project name="jms-ws-transport" default="build" basedir=".">
     <description>Builds, tests, and runs the project jms-ws-transport.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
@@ -66,4 +66,6 @@
     nbproject/build-impl.xml file. 
 
     -->
+    <target name="build" depends="jar" />
+    <target name="rebuild" depends="clean, jar" />
 </project>
