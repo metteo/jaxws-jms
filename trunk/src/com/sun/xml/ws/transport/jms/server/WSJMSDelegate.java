@@ -74,8 +74,6 @@ public class WSJMSDelegate {
         JMSURI jmsURI = JMSURI.parse(requestURI);
         String path = jmsURI.getParameter(JMSConstants.TARGET_SERVICE_URI);
         if (path != null) {
-            path = "/" + path.split("/")[1];
-            
             result = fixedUrlPatternEndpoints.get(path);
             if (result == null) {
                 for (JMSAdapter candidate : pathUrlPatternEndpoints) {
@@ -92,7 +90,6 @@ public class WSJMSDelegate {
     
     public void process(BytesMessage message) throws JMSException {
         String targetURI = message.getStringProperty(JMSConstants.TARGET_URI_PROPERTY);
-        
         try {
             JMSAdapter target = getTarget(targetURI);
             target.handle(context, message);

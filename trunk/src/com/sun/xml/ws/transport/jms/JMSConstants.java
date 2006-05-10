@@ -37,6 +37,7 @@ public class JMSConstants {
     
     public static final String TARGET_URI_PROPERTY = "TARGET_URI";
     public static final String REPLY_STATUS_PROPERTY = "REPLY_STATUS";
+    public static final String SOAP_ACTION_PROPERTY = "SOAPAction";
 
     public static final String TARGET_SERVICE_URI = "path";
 

@@ -44,10 +44,6 @@ import java.util.Map;
  * @author Alexey Stashok
  */
 public class JMSTransportPipe implements Pipe {
-    public static final String TARGET_URI_PROPERTY = "TARGET_URI";
-    public static final String REPLY_STATUS_PROPERTY = "REPLY_STATUS";
-    public static final String SOAP_ACTION_PROPERTY = "SOAPAction";
-    
     private final Encoder encoder;
     private final Decoder decoder;
     
@@ -86,7 +82,6 @@ public class JMSTransportPipe implements Pipe {
             
             JMSClientTransport con = new JMSClientTransport(packet, reqHeaders);
             
-            
             ContentType ct = encoder.getStaticContentType(packet);
             requestPacketOutStream = new ByteArrayOutputStream();
             ContentType dynamicCT = encoder.encode(packet, requestPacketOutStream);
@@ -95,9 +90,9 @@ public class JMSTransportPipe implements Pipe {
                 ct = dynamicCT;
             }
             
-            reqHeaders.put(SOAP_ACTION_PROPERTY, ct.getSOAPAction());
+            reqHeaders.put(JMSConstants.SOAP_ACTION_PROPERTY, ct.getSOAPAction());
             reqHeaders.put(JMSConstants.CONTENT_TYPE_PROPERTY, ct.getContentType());
-            reqHeaders.put(TARGET_URI_PROPERTY, packet.endpointAddress.getURI().toASCIIString());
+            reqHeaders.put(JMSConstants.TARGET_URI_PROPERTY, packet.endpointAddress.getURI().toASCIIString());
             
             byte[] rplPacket = con.sendMessage(requestPacketOutStream.toByteArray());
             
