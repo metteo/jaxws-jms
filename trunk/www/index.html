@@ -1,45 +1,71 @@
-<html>
-<head>
-<title>Project Home Page</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-</head>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+  <TITLE>JMS Web Services transport project</TITLE>
+  <link rel="alternate" type="application/rss+xml" href="https://jax-ws.dev.java.net/servlets/ProjectNewsRSS">
+  <style>
+      .app H3 {
+        clear: none;
+      }
+      .axial {
+        display: none;
+      }
+      #apphead {
+        display: none;
+      }
+    .floatbox {
+      width:190px;
+      
+      // background:rgb(254,236,219);
+      background:rgb(238,238,238);
+      margin-top: 1em;
+      padding: 5px;
+      // border: 1px solid rgb(252,142,37);
+      border: 1px solid rgb(170,170,170);
+    }
+  </style>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<script>
+// kill "description" h3 bar
+ld = document.getElementById("longdescription");
+for( n=ld.firstChild; n!=null; n=n.nextSibling ) {
+  if(n.nodeType==1 && n.innerHTML=="Description" ) {
+    n.parentNode.removeChild(n);
+    break;
+  }
+}
+</script>
+<TABLE  border="0" width="100%">
+    <TR>
+	<TD>
+	    <p><a href="https://glassfish.dev.java.net"><img src="https://glassfish.dev.java.net/public/image/glassfish_logo.gif" valign="top" align="middle" border="0" alt="logo"></a></p>
+	<TD>
+	    <H1>JMS Web services transport project</H1>
+	    Part of <a href="http://glassfish.dev.java.net">Project GlassFish</a> in the <a href="https://jax-ws.dev.java.net/index.html">JAX-WS subcommunity</a>
+	</TD>
+	<td width="*">
+	    <div align=right>
+		<a href="https://jax-ws.dev.java.net/servlets/ProjectNewsRSS"><img src="https://jax-ws.dev.java.net/images/rss1.gif" border="0"></a><br>
+	    <small>
+		(<a href="http://wiki.java.net/bin/view/Javawsxml/RssCorner">new to RSS?</a>)
+	    </small>
+	    </div>
+	</td>
+    </TR>
+</TABLE>
 
-<body bgcolor="#FFFFFF" text="#000000">
-<h1>Default project home page </h1>
-<p>Congratulations on your new java.net project! </p>
-<p>This page is the home page for your new project. This content is appearing 
-  because you have selected the option <b>Use project index.html</b>. To edit 
-  the information displayed on this page, just use CVS to check out your project's 
-  CVS repository and edit index.html in directory www. You can get more information 
-  on how to set-up your local CVS client, click on <b>Version Control</b> on the 
-  left nav bar. </p>
-<p>If you don't want to use CVS to manage your home page, click on the <b>Edit 
-  project</b> link on this page and unclick the option <b>Use project index.html</b>. 
-  Your project home page contents will be generated from the <b>Edit project</b> 
-  field <b>Description</b>. Edit the text on that field to change your home page 
-  contents. Click on <b>Submit changes</b> to save your edits. </p>
-<p>If you are looking for <a href="https://java-net.dev.java.net/ProjectPages.html#templates">sample 
-  home page templates</a>, check out the <a href="https://java-net.dev.java.net/ProjectPages.html">java.net 
-  Project Starter Kit</a>. Copy either of the templates into your project's html 
-  to get started on your project's home page. </p>
-<p>You can find lots of helpful information in the Starter Kit to get your project 
-  started. Some of the things you will find in there include:</p>
-<ul>
-  <li>Hints on how to <a href="https://java-net.dev.java.net/ProjectPages.html#pages">set-up 
-    your project's</a> home page</li>
-  <li>Ideas on how to <a href="https://java-net.dev.java.net/ProjectPages.html#publicity">publicize 
-    your project</a> including RSS feeds</li>
-  <li>Hints on <a href="https://java-net.dev.java.net/pagedesign.html">project 
-    page HTML</a></li>
-  <li>Setting up project <a href="https://java-net.dev.java.net/ProjectPages.html#wiki">wiki 
-    pages</a></li>
-  <li>And places to go if <a href="https://java-net.dev.java.net/ProjectPages.html#feedback">you 
-    have questions</a>.</li>
-</ul>
-<p>Remember that you will attract more new members and your project team will 
-  work more effectively if you, as the project owner, supply sufficient information 
-  about your project for visitors to your project space. Good luck with your new 
-  project! </p>
-</body>
-</html>
-
+<P>Welcome to the JMS Web service transport project, an example Web service transport
+component for the JAX-WS reference implementation that utilizes JMS.
+<H3><A NAME="introduction"></A>Introduction</H3>
+<P>TODO</P>
+<H3>Downloads</H3>
+<p>TODO</p>
+<H3>Current status</H3>
+<P>TODO<p>
+<H3><A NAME="terms and conditions"></A>Terms and Conditions</H3>
+<P>This project code  code is made available under the terms of
+the Comment Development and Distribution License (<A HREF="http://www.opensource.org/licenses/cddl1.php">CDDL 1.0</A>).
+</P>
+</BODY>
+</HTML>
