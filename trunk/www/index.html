@@ -86,9 +86,8 @@ Everything is specified from the endpoint address URL, the schema of which
 determines what transport is used in JAX-WS.</P>
 <P>TODO on the use of queues and message exchange pattern.</P>
 <P>The WSDL (AddNumbers.wsdl) used by the sample contains the following
-soap:address for the AddNumbersPort of the AddNumbersService: 
+soap:address for the AddNumbersPort of the AddNumbersService: </P>
 <PRE>&lt;soap:address location=&quot;jms://localhost:3700/jaxwsfactory/jaxwsqueue?path=fromjava/addnumbers&quot; /&gt;</PRE>
-</P>
 <P>The location attribute value is a URL whose schema is "jms".
 This informs the JAX-WS client runtime that JMS client transport should be used. TODO on registration</P>
 <P>The URL for the JMS transport has the following structure:</P>
