@@ -82,8 +82,25 @@ Type 'ant clean client run-client' from the samples/fromwsdl directory.</P>
 <H3>How the sample works with the JMS transport</H3>
 <P>To "plug-in" a transport requires no modification to the following:
 client or service endpoint implementation code; and deployment descriptors.
-Everything is specified from the endpoint address URI, the schema of which
-determines what transport is used in JAX-WS</P>
+Everything is specified from the endpoint address URL, the schema of which
+determines what transport is used in JAX-WS.</P>
+<P>TODO on the use of queues and message exchange pattern.</P>
+<P>The WSDL (AddNumbers.wsdl) used by the sample contains the following
+soap:address for the AddNumbersPort of the AddNumbersService: 
+<PRE>&lt;soap:address location=&quot;jms://localhost:3700/jaxwsfactory/jaxwsqueue?path=fromjava/addnumbers&quot; /&gt;</PRE>
+</P>
+<P>The location attribute value is a URL whose schema is "jms".
+This informs the JAX-WS client runtime that JMS client transport should be used. TODO on registration</P>
+<P>The URL for the JMS transport has the following structure:</P>
+<PRE>jms://&lt;host&gt;:&lt;port&gt;/&lt;jms_factory_name&gt;/&lt;jms_queue_name&gt;?path=&lt;ws_path&gt;</PRE>
+Where "jms_factory_name" is a JMS factory,
+"jms_queue_name" is a JMS queue, 
+and "ws_path" is the path to a deployed Web service.</P>
+<P>From such a URL the JMS client transport knows which JMS factory and queue
+to use for the transmission of SOAP messages, and the JMS server transport
+knows the path, and hence the deployed service endpoint, to which inbound
+SOAP messages should be dispatched to.</P>
+<P>TODO on how the path argument is sent via JMS.</P>
 <H3><A NAME="terms and conditions"></A>Terms and Conditions</H3>
 <P>This project code  code is made available under the terms of
 the Comment Development and Distribution License (<A HREF="http://www.opensource.org/licenses/cddl1.php">CDDL 1.0</A>).
