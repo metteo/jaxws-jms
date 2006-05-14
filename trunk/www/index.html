@@ -56,13 +56,34 @@ for( n=ld.firstChild; n!=null; n=n.nextSibling ) {
 </TABLE>
 
 <P>Welcome to the JMS Web service transport project, an example Web service transport
-component for the JAX-WS reference implementation that utilizes JMS.
+component for the JAX-WS reference implementation 2.0.1 that utilizes JMS.</P>
 <H3><A NAME="introduction"></A>Introduction</H3>
-<P>TODO</P>
-<H3>Downloads</H3>
-<p>TODO</p>
-<H3>Current status</H3>
-<P>TODO<p>
+<P>This project is designed to show by example how to implement plugable transports
+into the latest (rearchitectured) JAX-WS code, which supports client
+and service-based transports as plugable components.</P>
+<P>The example chosen in this case is JMS. SOAP messages produced and consumed by the JAX-WS runtime are transmitted over a JMS Queues.</P>
+<H3>How to run the sample</H3>
+<P>A sample Web service is provided (see here XXXX) that is configured to use the
+JMS transport. The sample can be built and run in the following steps:</P>
+<UL>
+    <LI><P>Build the JMS transport.
+Type 'ant' from the main project directory.</P>
+    <LI><P>Create a JMS factory nameed 'jaxwsfactory' and a
+JMS queue named 'jaxwsqueue'.
+TODO instructions.
+    <LI><P>Run the standalone JMS container for hosting the Web service.
+Type 'ant start-server'.</P>
+    <LI><P>Build and deploy sample Web service.
+Type 'ant clean server' from the samples/fromwsdl directory.</P>
+    <LI><P>Build and run the client.
+Type 'ant clean client run-client' from the samples/fromwsdl directory.</P>
+</UL>
+</UL>
+<H3>How the sample works with the JMS transport</H3>
+<P>To "plug-in" a transport requires no modification to the following:
+client or service endpoint implementation code; and deployment descriptors.
+Everything is specified from the endpoint address URI, the schema of which
+determines what transport is used in JAX-WS</P>
 <H3><A NAME="terms and conditions"></A>Terms and Conditions</H3>
 <P>This project code  code is made available under the terms of
 the Comment Development and Distribution License (<A HREF="http://www.opensource.org/licenses/cddl1.php">CDDL 1.0</A>).
