@@ -139,7 +139,7 @@
         </java>
     </target>
 
-    <target name="run-server">
+    <target name="run-service">
         <java fork="true" classname="${standalone-server}">
             <classpath>
                 <path refid="jaxws.classpath"/>
@@ -166,8 +166,6 @@
         <antcall target="build-server-wsdl" />
 
         <antcall target="create-war" />
-
-        <antcall target="deploy" />
     </target>
 
 </project>

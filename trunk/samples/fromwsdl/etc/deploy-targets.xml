@@ -33,10 +33,5 @@
 <property name="build.war.home" value="${build.home}/war"/>
 <property name="domain" value="domain1"/>
 
-<target name="deploy">
-    <copy file="${build.war.home}/jaxws-${ant.project.name}.war"
-        todir="${as.home}/domains/${domain}/autodeploy"/>
-</target>
-
 
 
