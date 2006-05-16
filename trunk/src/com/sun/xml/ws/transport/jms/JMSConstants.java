@@ -28,7 +28,6 @@ import com.sun.xml.ws.transport.http.WSHTTPConnection;
  * @author Alexey Stashok
  */
 public class JMSConstants {
-    public static final String JMS_ONE_WAY_PROPERTY_NAME = "ONE_WAY";
     public static final String CONTENT_TYPE_PROPERTY = "CONTENT_TYPE";
 
     public static final int ERROR_STATUS_LIMIT = 400;
