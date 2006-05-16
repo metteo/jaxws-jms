@@ -91,18 +91,25 @@ JMS queue named 'jaxwsqueue'.
 <H3>How the sample works with the JMS transport</H3>
 <P>To "plug-in" a transport requires no modification to the following:
 client or service endpoint implementation code; and deployment descriptors.
-Everything is specified from the endpoint address URL, the schema of which
+Everything is specified from the endpoint address URL, the scheme of which
 determines what transport is used in JAX-WS.</P>
 
-<P>The JMS transport uses one configured queue for the request and a temporary queue
-for the reply to suport the request response message exchange pattern.</P>
+<P>The JMS transport uses a configured queue for the request and a
+temporary queue for the reply to suport the request response message
+exchange pattern.</P>
 
 <P>The WSDL (<A href="https://jms-ws-transport.dev.java.net/source/browse/jms-ws-transport/samples/fromwsdl/etc/AddNumbers.wsdl?view=markup">AddNumbers.wsdl</A>) used by the sample contains the following
 soap:address for the AddNumbersPort of the AddNumbersService: </P>
 
 <P><PRE>&lt;soap:address location=&quot;x-jms://localhost:3700/jaxwsfactory/jaxwsqueue?path=fromjava/addnumbers&quot; /&gt;</PRE></P>
-<P>The location attribute value is a URL whose schema is "x-jms".
-This informs the JAX-WS client runtime that JMS client transport should be used. TODO on registration</P>
+
+<P>The location attribute value is a URL whose scheme is "x-jms".
+This informs the JAX-WS client runtime that the JMS client transport
+should be used.
+The sample client includes in its class path a file in the META-INF/services directory called <A href="https://jms-ws-transport.dev.java.net/source/browse/jms-ws-transport/samples/fromwsdl/etc/META-INF/services/com.sun.xml.ws.api.pipe.TransportPipeFactory?view=markup">com.sun.xml.ws.api.pipe.TransportPipeFactory</A>.
+This file contains the class of the JMS transport component, <A href="https://jms-ws-transport.dev.java.net/source/browse/jms-ws-transport/src/com/sun/xml/ws/transport/jms/client/JMSTransportPipeFactory.java?view=markup">com.sun.xml.ws.transport.jms.client.JMSTransportPipeFactory</A>.
+The inclusion of this file registers the JMS transport factory with the JAX-WS client runtime. The factory knows about the 'x-jms' URL scheme and is responsible for instantiating a JMS transport pipe.
+</P>
 
 <P>The URL for the JMS transport has the following structure:</P>
 <P><PRE>x-jms://&lt;host&gt;:&lt;port&gt;/&lt;jms_factory_name&gt;/&lt;jms_queue_name&gt;?path=&lt;ws_path&gt;</PRE></P>
@@ -112,9 +119,15 @@ and "ws_path" is the path to a deployed Web service.</P>
 <P>From such a URL the JMS client transport knows which JMS factory and queue
 to use for the transmission of SOAP messages, and the JMS server transport
 knows the path, and hence the deployed service endpoint, to which inbound
-SOAP messages should be dispatched to.</P>
-<P>TODO on how the path argument is sent via JMS.</P>
-<P>TODO on what is the standalone server and how the service is deployed in.</P>
+SOAP messages should be dispatched to. 
+The "ws_path" is sent as a JMS message header with a request.</P>
+
+<P>Currently Web services using the JMS transport component are deployed as
+standalone services and within the Glassfish application service for reasons
+of simplicity. To integrate with the application server requires that the
+standlone functionality is integrated into a message-driven bean that is
+responsible dispatching inbound messages to the deployed Web services.</P>
+
 <H3><A NAME="terms and conditions"></A>Terms and Conditions</H3>
 <P>This project code  code is made available under the terms of
 the Comment Development and Distribution License (<A HREF="http://www.opensource.org/licenses/cddl1.php">CDDL 1.0</A>).
