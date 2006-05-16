@@ -33,13 +33,9 @@ import com.sun.xml.ws.api.pipe.TransportPipeFactory;
  * @author Alexey Stashok
  */
 public class JMSTransportPipeFactory extends TransportPipeFactory {
-    
-    
-    public JMSTransportPipeFactory() {
-    }
-    
+        
     public Pipe doCreate(EndpointAddress address, WSDLPort wsdlModel, WSService service, WSBinding binding) {
-        if (address.getURI().getScheme().equalsIgnoreCase("jms")) {
+        if (address.getURI().getScheme().equalsIgnoreCase("x-jms")) {
             return new JMSTransportPipe(binding);
         }
         
