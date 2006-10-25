@@ -22,9 +22,12 @@
 
 package com.sun.xml.ws.transport.jms.server;
 
+import com.sun.istack.NotNull;
 import com.sun.xml.ws.api.message.Packet;
+import com.sun.xml.ws.api.server.WSEndpoint;
 import com.sun.xml.ws.api.server.WebServiceContextDelegate;
 import com.sun.xml.ws.transport.jms.JMSConstants;
+import com.sun.xml.ws.transport.jms.JMSURI;
 import com.sun.xml.ws.transport.jms.JMSUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -48,6 +51,7 @@ public class JMSConnectionImpl implements WebServiceContextDelegate {
     private JMSContext context;
     private Session jmsSession;
     private BytesMessage requestMessage;
+    private JMSURI uri;
     
     private InputStream inputStream;
     private OutputStream outputStream;
@@ -59,9 +63,10 @@ public class JMSConnectionImpl implements WebServiceContextDelegate {
     private Map<String, String> requestHeaders;
     private Map<String, String> responseHeaders;
     
-    public JMSConnectionImpl(JMSContext context, BytesMessage requestMessage) throws JMSException {
+    public JMSConnectionImpl(JMSContext context, BytesMessage requestMessage, JMSURI uri) throws JMSException {
         this.context = context;
         this.requestMessage = requestMessage;
+        this.uri = uri;
         jmsSession = (Session) context.getAttribute(JMSContext.SESSION_ATTR);
         
         BytesMessage rqstMessage = (BytesMessage) requestMessage;
@@ -109,10 +114,6 @@ public class JMSConnectionImpl implements WebServiceContextDelegate {
         return outputStream;
     }
     
-    public WebServiceContextDelegate getWebServiceContextDelegate() {
-        return this;
-    }
-    
     public void closeInput() {
         if (inputStream != null) {
             try {
@@ -148,14 +149,20 @@ public class JMSConnectionImpl implements WebServiceContextDelegate {
         }
     }
     
+    // Not supported
     public Principal getUserPrincipal(Packet request) {
         return null;
     }
     
+    // Not supported
     public boolean isUserInRole(Packet request, String role) {
-        return true;
+        return false;
     }
     
+    public @NotNull String getEPRAddress(@NotNull Packet request, @NotNull WSEndpoint endpoint) {
+        return uri.toString();
+    }
+
     public void flush() throws IOException, JMSException {
         if (outputStream != null) {
             outputStream.flush();

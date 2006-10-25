@@ -36,13 +36,16 @@ public class JMSURI {
     public String factory;
     public String queue;
     private Map<String, String> params;
+    private String uri2string;
     
-    private JMSURI(String host, int port, String factory, String queue, Map<String, String> params) {
+    private JMSURI(String host, int port, String factory, String queue, 
+                   Map<String, String> params, String uri2string) {
         this.host = host;
         this.port = port;
         this.factory = factory;
         this.queue = queue;
         this.params = params;
+        this.uri2string = uri2string;
     }
     
     public String getParameter(String name) {
@@ -53,6 +56,10 @@ public class JMSURI {
         return null;
     }
     
+    public String toString() {
+        return uri2string;
+    }
+
     public static JMSURI parse(String uri) {
         try {
             return parse(new URI(uri));
@@ -80,7 +87,7 @@ public class JMSURI {
             }
         }
         
-        return new JMSURI(uri.getHost(), uri.getPort(), sprt[0], sprt[1], params);
+        return new JMSURI(uri.getHost(), uri.getPort(), sprt[0], sprt[1], params, uri.toASCIIString());
     }
     
 }

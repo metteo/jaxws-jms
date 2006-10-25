@@ -69,9 +69,8 @@ public class WSJMSDelegate {
     /**
      * Determines which {@link ServletAdapter} serves the given request.
      */
-    private JMSAdapter getTarget(String requestURI) throws JMSException {
+    private JMSAdapter getTarget(JMSURI jmsURI) throws JMSException {
         JMSAdapter result = null;
-        JMSURI jmsURI = JMSURI.parse(requestURI);
         String path = jmsURI.getParameter(JMSConstants.TARGET_SERVICE_URI);
         if (path != null) {
             result = fixedUrlPatternEndpoints.get(path);
@@ -90,9 +89,10 @@ public class WSJMSDelegate {
     
     public void process(BytesMessage message) throws JMSException {
         String targetURI = message.getStringProperty(JMSConstants.TARGET_URI_PROPERTY);
+        JMSURI jmsURI = JMSURI.parse(targetURI);
         try {
-            JMSAdapter target = getTarget(targetURI);
-            target.handle(context, message);
+            JMSAdapter target = getTarget(jmsURI);
+            target.handle(context, message, jmsURI);
         } catch (JAXWSExceptionBase e) {
 //            try {
 //                replyMessage.setIntProperty(REPLY_STATUS_PROPERTY, RS_INTERNAL_SERVER_ERROR);

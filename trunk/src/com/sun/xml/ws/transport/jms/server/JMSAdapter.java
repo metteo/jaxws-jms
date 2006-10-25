@@ -50,8 +50,9 @@ public class JMSAdapter extends Adapter<JMSAdapter.JMSToolkit> {
         this.urlPattern = urlPattern;
     }
     
-    public void handle(JMSContext context, BytesMessage requestMessage) throws IOException, JMSException {
-        JMSConnectionImpl connection = new JMSConnectionImpl(context, requestMessage);
+    public void handle(JMSContext context, BytesMessage requestMessage,
+                       JMSURI uri) throws IOException, JMSException {
+        JMSConnectionImpl connection = new JMSConnectionImpl(context, requestMessage, uri);
         
         JMSToolkit tk = pool.take();
         try {
@@ -80,46 +81,46 @@ public class JMSAdapter extends Adapter<JMSAdapter.JMSToolkit> {
     }
     
     class JMSToolkit extends Adapter.Toolkit implements TransportBackChannel {
-        private JMSConnectionImpl con;
+        private JMSConnectionImpl connection;
         
         private void handle(JMSConnectionImpl connection) throws IOException {
-            this.con = connection;
+            this.connection = connection;
             
-            String ct = con.getRequestHeader(JMSConstants.CONTENT_TYPE_PROPERTY);
-            InputStream in = con.getInputStream();
+            String contentTypeStr = connection.getRequestHeader(JMSConstants.CONTENT_TYPE_PROPERTY);
+            InputStream in = connection.getInputStream();
             Packet packet = new Packet();
-            decoder.decode(in, ct, packet);
+            codec.decode(in, contentTypeStr, packet);
             try {
-                packet = head.process(packet,con.getWebServiceContextDelegate(),this);
+                packet = head.process(packet, connection, this);
             } catch(Exception e) {
                 e.printStackTrace();
-                writeInternalServerError(con);
+                writeInternalServerError(connection);
                 return;
             }
             
-            ct = encoder.getStaticContentType(packet).getContentType();
-            if (ct == null) {
+            contentTypeStr = codec.getStaticContentType(packet).getContentType();
+            if (contentTypeStr == null) {
                 throw new UnsupportedOperationException();
             } else {
                 Map<String, String> headers = new HashMap();
-                headers.put(JMSConstants.CONTENT_TYPE_PROPERTY, ct);
-                con.setResponseHeaders(headers);
+                headers.put(JMSConstants.CONTENT_TYPE_PROPERTY, contentTypeStr);
+                connection.setResponseHeaders(headers);
                 if (packet.getMessage() == null) {
-                    con.setStatus(JMSConstants.ONEWAY);
+                    connection.setStatus(JMSConstants.ONEWAY);
                 } else {
-                    encoder.encode(packet, con.getOutputStream());
+                    codec.encode(packet, connection.getOutputStream());
                 }
             }
             
         }
         
-        private void writeInternalServerError(JMSConnectionImpl con) {
-            con.setStatus(JMSConstants.ERROR_INTERNAL);
+        private void writeInternalServerError(JMSConnectionImpl connection) {
+            connection.setStatus(JMSConstants.ERROR_INTERNAL);
         }
         
         public void close() {
-            con.setStatus(JMSConstants.ONEWAY);
-            con.close();
+            connection.setStatus(JMSConstants.ONEWAY);
+            connection.close();
         }
     };
     

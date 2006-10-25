@@ -22,10 +22,8 @@
 
 package com.sun.xml.ws.transport.jms.client;
 
-import com.sun.xml.ws.api.EndpointAddress;
-import com.sun.xml.ws.api.WSBinding;
-import com.sun.xml.ws.api.WSService;
-import com.sun.xml.ws.api.model.wsdl.WSDLPort;
+import com.sun.istack.NotNull;
+import com.sun.xml.ws.api.pipe.ClientPipeAssemblerContext;
 import com.sun.xml.ws.api.pipe.Pipe;
 import com.sun.xml.ws.api.pipe.TransportPipeFactory;
 
@@ -34,9 +32,9 @@ import com.sun.xml.ws.api.pipe.TransportPipeFactory;
  */
 public class JMSTransportPipeFactory extends TransportPipeFactory {
         
-    public Pipe doCreate(EndpointAddress address, WSDLPort wsdlModel, WSService service, WSBinding binding) {
-        if (address.getURI().getScheme().equalsIgnoreCase("x-jms")) {
-            return new JMSTransportPipe(binding);
+    public Pipe doCreate(@NotNull ClientPipeAssemblerContext context) {
+        if (context.getAddress().getURI().getScheme().equalsIgnoreCase("x-jms")) {
+            return new JMSTransportPipe(context);
         }
         
         return null;

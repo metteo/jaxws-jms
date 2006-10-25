@@ -24,9 +24,9 @@ package com.sun.xml.ws.transport.jms.client;
 
 import com.sun.xml.ws.api.WSBinding;
 import com.sun.xml.ws.api.message.Packet;
+import com.sun.xml.ws.api.pipe.ClientPipeAssemblerContext;
+import com.sun.xml.ws.api.pipe.Codec;
 import com.sun.xml.ws.api.pipe.ContentType;
-import com.sun.xml.ws.api.pipe.Decoder;
-import com.sun.xml.ws.api.pipe.Encoder;
 import com.sun.xml.ws.api.pipe.Pipe;
 import com.sun.xml.ws.api.pipe.PipeCloner;
 import com.sun.xml.ws.transport.jms.JMSConstants;
@@ -40,24 +40,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
  * @author Alexey Stashok
  */
-public class JMSTransportPipe implements Pipe {
-    private final Encoder encoder;
-    private final Decoder decoder;
+public class JMSTransportPipe implements Pipe {    
+    final protected ClientPipeAssemblerContext pipeAssemblerContext;
     
-    public JMSTransportPipe(WSBinding binding) {
-        this(binding.createEncoder(),binding.createDecoder());
+    public JMSTransportPipe(ClientPipeAssemblerContext context) {
+        this.pipeAssemblerContext = context;
     }
     
-    private JMSTransportPipe(Encoder encoder, Decoder decoder) {
-        this.encoder = encoder;
-        this.decoder = decoder;
-    }
-    
-    private JMSTransportPipe(JMSTransportPipe that, PipeCloner cloner) {
-        this(that.encoder, that.decoder);
+    protected JMSTransportPipe(JMSTransportPipe that, PipeCloner cloner) {
+        this(that.pipeAssemblerContext);
         cloner.add(that, this);
     }
     
@@ -73,6 +66,7 @@ public class JMSTransportPipe implements Pipe {
         ByteArrayOutputStream requestPacketOutStream = null;
         
         try {
+            Codec codec = pipeAssemblerContext.getCodec();
             // get transport headers from message
             Map<String, String> reqHeaders = (Map<String, String>) packet.invocationProperties.get(JMSConstants.JMS_REQUEST_HEADERS);
             //assign empty map if its null
@@ -82,30 +76,29 @@ public class JMSTransportPipe implements Pipe {
             
             JMSClientTransport con = new JMSClientTransport(packet, reqHeaders);
             
-            ContentType ct = encoder.getStaticContentType(packet);
+            ContentType ct = codec.getStaticContentType(packet);
             requestPacketOutStream = new ByteArrayOutputStream();
-            ContentType dynamicCT = encoder.encode(packet, requestPacketOutStream);
+            ContentType dynamicCT = codec.encode(packet, requestPacketOutStream);
             if (ct == null) {
                 // data size is available, set it as Content-Length
                 ct = dynamicCT;
             }
             
-            reqHeaders.put(JMSConstants.SOAP_ACTION_PROPERTY, ct.getSOAPAction());
             reqHeaders.put(JMSConstants.CONTENT_TYPE_PROPERTY, ct.getContentType());
             reqHeaders.put(JMSConstants.TARGET_URI_PROPERTY, packet.endpointAddress.getURI().toASCIIString());
             
             byte[] rplPacket = con.sendMessage(requestPacketOutStream.toByteArray());
             
             if(!con.isPayloadExist()) {
-                return packet.createResponse(null);    // one way. null response given.
+                return packet.createClientResponse(null);    // one way. null response given.
             }
             
             Map<String, String> respHeaders = con.getHeaders();
             String contentTypeStr = getContentType(respHeaders);
             
-            Packet reply = packet.createResponse(null);
+            Packet reply = packet.createClientResponse(null);
             replyPacketInStream = new ByteArrayInputStream(rplPacket);
-            decoder.decode(replyPacketInStream, contentTypeStr, reply);
+            codec.decode(replyPacketInStream, contentTypeStr, reply);
             return reply;
         } catch(WebServiceException wex) {
             throw wex;

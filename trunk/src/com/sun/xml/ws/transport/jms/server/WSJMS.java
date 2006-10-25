@@ -3,12 +3,12 @@
  * of the Common Development and Distribution License
  * (the License).  You may not use this file except in
  * compliance with the License.
- * 
+ *
  * You can obtain a copy of the license at
  * https://glassfish.dev.java.net/public/CDDLv1.0.html.
  * See the License for the specific language governing
  * permissions and limitations under the License.
- * 
+ *
  * When distributing Covered Code, include this CDDL
  * Header Notice in each file and include the License file
  * at https://glassfish.dev.java.net/public/CDDLv1.0.html.
@@ -16,7 +16,7 @@
  * with the fields enclosed by brackets [] replaced by
  * you own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
- * 
+ *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
@@ -25,8 +25,8 @@ package com.sun.xml.ws.transport.jms.server;
 import com.sun.xml.ws.transport.http.DeploymentDescriptorParser;
 import com.sun.xml.ws.transport.jms.JMSURI;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 import javax.jms.BytesMessage;
@@ -38,6 +38,7 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.Queue;
 import javax.jms.Session;
+import javax.naming.Context;
 import javax.naming.InitialContext;
 
 /**
@@ -57,24 +58,26 @@ public class WSJMS implements MessageListener {
         
         DeploymentDescriptorParser<JMSAdapter> parser = new DeploymentDescriptorParser<JMSAdapter>(
                 classloader, new JMSResourceLoader(context), null, JMSAdapter.FACTORY);
-        InputStream is = context.getResourceAsStream(JAXWS_RI_RUNTIME);
-        
-        try {
-            return parser.parse(is);
-        } finally {
-            is.close();
-        }
+        URL sunJaxWsXml = context.getResource(JAXWS_RI_RUNTIME);
+        return parser.parse(sunJaxWsXml.toExternalForm(), sunJaxWsXml.openStream());
     }
     
     private Connection initializeJMSConnection(String host, int port, String factoryName, String queueName) throws Exception {
         Connection connection = null;
         
-        Properties env = new Properties();
-        env.put("org.omg.CORBA.ORBInitialHost", host);
-        env.put("org.omg.CORBA.ORBInitialPort", String.valueOf(port));
+        Properties props = new Properties();
+        props.setProperty("java.naming.factory.initial",
+                "com.sun.enterprise.naming.SerialInitContextFactory");
+        props.setProperty("java.naming.factory.url.pkgs",
+                "com.sun.enterprise.naming");
+        props.setProperty("java.naming.factory.state",
+                "com.sun.corba.ee.impl.presentation.rmi.JNDIStateFactoryImpl");
+        
+        props.put("org.omg.CORBA.ORBInitialHost", host);
+        props.put("org.omg.CORBA.ORBInitialPort", String.valueOf(port));
         
         try {
-            InitialContext ic = new InitialContext(env);
+            InitialContext ic = new InitialContext(props);
             ConnectionFactory connectionFactory = (ConnectionFactory) ic.lookup(factoryName);
             Queue destinationQueue = (Queue) ic.lookup(queueName);
             
