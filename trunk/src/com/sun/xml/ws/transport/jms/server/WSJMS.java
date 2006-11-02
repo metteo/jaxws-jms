@@ -38,7 +38,6 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.Queue;
 import javax.jms.Session;
-import javax.naming.Context;
 import javax.naming.InitialContext;
 
 /**
@@ -49,20 +48,17 @@ public class WSJMS implements MessageListener {
     
     private static final String JAXWS_RI_RUNTIME = "WEB-INF/sun-jaxws.xml";
     
-    private JMSContext context;
     private WSJMSDelegate delegate;
     
-    public List<JMSAdapter> parseDeploymentDescriptor() throws IOException {
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        context = new JMSStandaloneContext(classloader);
-        
+    public List<JMSAdapter> parseDeploymentDescriptor(JMSContext context, ClassLoader classloader) throws IOException {
         DeploymentDescriptorParser<JMSAdapter> parser = new DeploymentDescriptorParser<JMSAdapter>(
                 classloader, new JMSResourceLoader(context), null, JMSAdapter.FACTORY);
         URL sunJaxWsXml = context.getResource(JAXWS_RI_RUNTIME);
         return parser.parse(sunJaxWsXml.toExternalForm(), sunJaxWsXml.openStream());
     }
     
-    private Connection initializeJMSConnection(String host, int port, String factoryName, String queueName) throws Exception {
+    private Connection initializeJMSConnection(JMSContext context,
+            JMSURI jmsURI) throws Exception {
         Connection connection = null;
         
         Properties props = new Properties();
@@ -73,13 +69,13 @@ public class WSJMS implements MessageListener {
         props.setProperty("java.naming.factory.state",
                 "com.sun.corba.ee.impl.presentation.rmi.JNDIStateFactoryImpl");
         
-        props.put("org.omg.CORBA.ORBInitialHost", host);
-        props.put("org.omg.CORBA.ORBInitialPort", String.valueOf(port));
+        props.put("org.omg.CORBA.ORBInitialHost", jmsURI.host);
+        props.put("org.omg.CORBA.ORBInitialPort", String.valueOf(jmsURI.port));
         
         try {
             InitialContext ic = new InitialContext(props);
-            ConnectionFactory connectionFactory = (ConnectionFactory) ic.lookup(factoryName);
-            Queue destinationQueue = (Queue) ic.lookup(queueName);
+            ConnectionFactory connectionFactory = (ConnectionFactory) ic.lookup(jmsURI.factory);
+            Queue destinationQueue = (Queue) ic.lookup(jmsURI.queue);
             
             connection = connectionFactory.createConnection();
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -87,8 +83,6 @@ public class WSJMS implements MessageListener {
             MessageConsumer consumer = session.createConsumer(destinationQueue);
             
             consumer.setMessageListener(this);
-            
-            context.setAttribute(JMSContext.SESSION_ATTR, session);
             return connection;
         } catch(Exception e) {
             if (connection != null) {
@@ -103,7 +97,9 @@ public class WSJMS implements MessageListener {
     }
     public Connection initialize() {
         try {
-            List<JMSAdapter> adapters = parseDeploymentDescriptor();
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            JMSContext context = new JMSStandaloneContext(new InitialContext(), classloader);
+            List<JMSAdapter> adapters = parseDeploymentDescriptor(context, classloader);
             delegate = new WSJMSDelegate(adapters, context);
             
             JMSAdapter adapter = adapters.get(0);
@@ -111,7 +107,7 @@ public class WSJMS implements MessageListener {
             
             JMSURI jmsURI = JMSURI.parse(uri);
             
-            return initializeJMSConnection(jmsURI.host, jmsURI.port, jmsURI.factory, jmsURI.queue);
+            return initializeJMSConnection(context, jmsURI);
         } catch (Exception e) {
             throw new WSJMSException("listener.parsingFailed", e);
         }
@@ -119,7 +115,6 @@ public class WSJMS implements MessageListener {
     }
     
     public void process() {
-        
         Connection connection = initialize();
         
         try {

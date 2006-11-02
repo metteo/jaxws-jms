@@ -36,6 +36,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 /**
  * @author Alexey Stashok
@@ -45,8 +47,11 @@ public class JMSStandaloneContext implements JMSContext {
     private Map<String, Object> attributes = new HashMap();
     private Set<String> resourcePaths;
     
-    public JMSStandaloneContext(ClassLoader classloader) {
+    private InitialContext jndiContext;
+    public JMSStandaloneContext(InitialContext jndiContext,
+            ClassLoader classloader) {
         this.classloader = classloader;
+        this.jndiContext = jndiContext;
     }
     
     public InputStream getResourceAsStream(String resource) throws IOException {
@@ -148,5 +153,9 @@ public class JMSStandaloneContext implements JMSContext {
     
     public void setAttribute(String name, Object value) {
         attributes.put(name, value);
+    }
+
+    public Object lookup(String name) throws NamingException {
+        return jndiContext.lookup(name);
     }
 }

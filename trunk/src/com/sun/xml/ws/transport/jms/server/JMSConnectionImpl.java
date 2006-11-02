@@ -3,12 +3,12 @@
  * of the Common Development and Distribution License
  * (the License).  You may not use this file except in
  * compliance with the License.
- * 
+ *
  * You can obtain a copy of the license at
  * https://glassfish.dev.java.net/public/CDDLv1.0.html.
  * See the License for the specific language governing
  * permissions and limitations under the License.
- * 
+ *
  * When distributing Covered Code, include this CDDL
  * Header Notice in each file and include the License file
  * at https://glassfish.dev.java.net/public/CDDLv1.0.html.
@@ -16,7 +16,7 @@
  * with the fields enclosed by brackets [] replaced by
  * you own identifying information:
  * "Portions Copyrighted [year] [name of copyright owner]"
- * 
+ *
  * Copyright 2006 Sun Microsystems Inc. All Rights Reserved
  */
 
@@ -39,9 +39,12 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import javax.jms.BytesMessage;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Queue;
 import javax.jms.Session;
+import javax.naming.NamingException;
 
 /**
  * @author Alexey Stashok
@@ -49,7 +52,7 @@ import javax.jms.Session;
 public class JMSConnectionImpl implements WebServiceContextDelegate {
     
     private JMSContext context;
-    private Session jmsSession;
+//    private Session jmsSession;
     private BytesMessage requestMessage;
     private JMSURI uri;
     
@@ -67,7 +70,7 @@ public class JMSConnectionImpl implements WebServiceContextDelegate {
         this.context = context;
         this.requestMessage = requestMessage;
         this.uri = uri;
-        jmsSession = (Session) context.getAttribute(JMSContext.SESSION_ATTR);
+//        jmsSession = (Session) context.getAttribute(JMSContext.SESSION_ATTR);
         
         BytesMessage rqstMessage = (BytesMessage) requestMessage;
         byte[] rqstBuf = new byte[(int) rqstMessage.getBodyLength()];
@@ -162,30 +165,42 @@ public class JMSConnectionImpl implements WebServiceContextDelegate {
     public @NotNull String getEPRAddress(@NotNull Packet request, @NotNull WSEndpoint endpoint) {
         return uri.toString();
     }
-
+    
     public void flush() throws IOException, JMSException {
         if (outputStream != null) {
             outputStream.flush();
         }
         
-        BytesMessage replyMessage = jmsSession.createBytesMessage();
-        replyMessage.setIntProperty(JMSConstants.REPLY_STATUS_PROPERTY, status);
-        if (!JMSUtils.isStatusError(status) && status != JMSConstants.ONEWAY) {
-            byte[] content = ((ByteArrayOutputStream) getOutputStream()).toByteArray();
-            if (content.length > 0) {
-                replyMessage.writeBytes(content);
-            }
-            
-            for(Map.Entry<String, String> entry : responseHeaders.entrySet()) {
-                if (entry.getValue() != null) {
-                    replyMessage.setStringProperty(entry.getKey(), entry.getValue());
-                }
-            }
+        Session jmsSession = null;
+        try {
+            ConnectionFactory connectionFactory = (ConnectionFactory) context.lookup(uri.factory);
+            Connection connection = connectionFactory.createConnection();
+            jmsSession = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        } catch (NamingException ex) {
+            throw new JMSException("NamingException: " + ex.getMessage());
         }
         
-        Session jmsSession = (Session) context.getAttribute(JMSContext.SESSION_ATTR);
-        Queue replyQueue = (Queue) requestMessage.getJMSReplyTo();
-        jmsSession.createProducer(replyQueue).send(replyMessage);
+        try {
+            BytesMessage replyMessage = jmsSession.createBytesMessage();
+            replyMessage.setIntProperty(JMSConstants.REPLY_STATUS_PROPERTY, status);
+            if (!JMSUtils.isStatusError(status) && status != JMSConstants.ONEWAY) {
+                byte[] content = ((ByteArrayOutputStream) getOutputStream()).toByteArray();
+                if (content.length > 0) {
+                    replyMessage.writeBytes(content);
+                }
+                
+                for(Map.Entry<String, String> entry : responseHeaders.entrySet()) {
+                    if (entry.getValue() != null) {
+                        replyMessage.setStringProperty(entry.getKey(), entry.getValue());
+                    }
+                }
+            }
+            
+            Queue replyQueue = (Queue) requestMessage.getJMSReplyTo();
+            jmsSession.createProducer(replyQueue).send(replyMessage);
+        } finally {
+            jmsSession.close();
+        }
     }
     
     private void populateRequestHeaders() throws JMSException {
