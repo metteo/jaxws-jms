@@ -9,7 +9,7 @@ fromwsdl sample demonstrates the WSDL->Java programming model.
     * custom-server.xml server customization file
     * build.properties, deploy-targets.xml ant script to deploy the endpoint
       war file
-    * sun-jaxws.xml deployment descriptor for web container
+    * sun-jaxws.xml deployment WS descriptor
     * /META-INF/services/com.sun.xml.ws.api.pipe.TransportPipeFactory transport pipe config file
 * src source files
     * client/AddNumbersClient.java - client application
@@ -22,8 +22,13 @@ fromwsdl sample demonstrates the WSDL->Java programming model.
       and exception class - AddNumbersFault_Exception
 
 * To run
-    * ant clean server - runs wsimport to compile AddNumbers.wsdl and generate
+    * using GlassFish admin console create following JMS artifacts:
+      JMS Queue factory: jaxwsfactory
+      JMS Queue: jaxwsqueue
+    * ant server - runs wsimport to compile AddNumbers.wsdl and generate
       server side artifacts and does the deployment
-    * ant clean client run - runs wsimport on the published wsdl by the deplyed
-      endpoint, compiles the generated artifacts and the client application
-      then executes it.
+    * ant client - runs wsimport on the published wsdl by the deployed
+      endpoint(now it takes wsdl localy), compiles the generates artifacts
+    * ant run-service - runs standalone service server part
+    * ant run-client - runs client
+
