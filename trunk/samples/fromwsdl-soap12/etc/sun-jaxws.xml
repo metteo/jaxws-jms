@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<endpoints
+    xmlns="http://java.sun.com/xml/ns/jax-ws/ri/runtime"
+    version="2.0">
+
+    <endpoint
+        name="fromwsdl-soap12"
+        interface="fromwsdl_soap12.server.AddNumbersPortType"
+        implementation="fromwsdl_soap12.server.AddNumbersImpl"
+        wsdl="WEB-INF/wsdl/AddNumbers.wsdl"
+        service="{http://duke.example.org}AddNumbersService"
+        port="{http://duke.example.org}AddNumbersPort"
+        binding="http://java.sun.com/xml/ns/jaxws/2003/05/soap/bindings/HTTP/"
+        url-pattern="/addnumbers" />
+
+</endpoints>

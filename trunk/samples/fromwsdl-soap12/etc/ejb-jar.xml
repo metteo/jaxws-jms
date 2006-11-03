@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" metadata-complete="true" version="3.0" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd">
+<enterprise-beans>
+<message-driven>
+<display-name>JMS-SOAP12-Sample</display-name>
+<ejb-name>JMSSOAP12Sample</ejb-name>
+<mapped-name>soap12sampleQ</mapped-name>
+<ejb-class>com.sun.xml.ws.transport.jms.server.WSJMSMDB</ejb-class>
+<messaging-type>javax.jms.MessageListener</messaging-type>
+<transaction-type>Container</transaction-type>
+</message-driven>
+</enterprise-beans>
+</ejb-jar>
