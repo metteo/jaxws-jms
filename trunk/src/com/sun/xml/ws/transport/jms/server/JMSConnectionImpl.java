@@ -166,6 +166,10 @@ public class JMSConnectionImpl implements WebServiceContextDelegate {
         return uri.toString();
     }
     
+    public String getWSDLAddress(@NotNull Packet request, @NotNull WSEndpoint endpoint) {
+        return null;
+    }
+
     public void flush() throws IOException, JMSException {
         if (outputStream != null) {
             outputStream.flush();
