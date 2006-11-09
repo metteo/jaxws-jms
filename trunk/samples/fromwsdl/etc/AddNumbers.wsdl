@@ -81,7 +81,7 @@
 	</binding>
 	<service name="AddNumbersService">
             <port name="AddNumbersPort" binding="tns:AddNumbersBinding">
-                <soap:address location="x-jms://localhost:3700/jaxwsfactory/jaxwsqueue?path=addnumbers" />
+                <soap:address location="x-jms://localhost:3700/jaxwsfactory/fromwsdlQ?path=addnumbers" />
             </port>
 	</service>
 </definitions>

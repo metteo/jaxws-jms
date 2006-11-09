@@ -23,8 +23,8 @@ fromwsdl sample demonstrates the WSDL->Java programming model.
 
 * To run
     * using GlassFish admin console create following JMS artifacts:
-      JMS Queue factory: jaxwsfactory
-      JMS Queue: jaxwsqueue
+      JMS Factory: jaxwsfactory
+      JMS Queue: fromwsdlQ
     * ant server - runs wsimport to compile AddNumbers.wsdl and generate
       server side artifacts and does the deployment
     * ant client - runs wsimport on the published wsdl by the deployed
@@ -32,3 +32,8 @@ fromwsdl sample demonstrates the WSDL->Java programming model.
     * ant run-service - runs standalone service server part
     * ant run-client - runs client
 
+Its also possible to deploy WS as EJB module to AppServer (tested just with GlassFish).
+To do so you need:
+    * Put JMS transport to AppServer instance lib directory (<AS_HOME>/domains/domain1/lib)
+    * Deploy jar file build/jar/jaxws-fromwsdl.jar as EJB module to AppServer
+    * Run client

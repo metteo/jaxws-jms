@@ -2,9 +2,9 @@
 <ejb-jar xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" metadata-complete="true" version="3.0" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_0.xsd">
 <enterprise-beans>
 <message-driven>
-<display-name>JMS-fromwsdlSOAP12-Sample</display-name>
-<ejb-name>JMSfromwsdlSOAP12Sample</ejb-name>
-<mapped-name>fromwsdlsoap12Q</mapped-name>
+<display-name>JMS-fromwsdl-Sample</display-name>
+<ejb-name>JMSfromwsdlSample</ejb-name>
+<mapped-name>fromwsdlQ</mapped-name>
 <ejb-class>com.sun.xml.ws.transport.jms.server.WSJMSMDB</ejb-class>
 <messaging-type>javax.jms.MessageListener</messaging-type>
 <transaction-type>Container</transaction-type>

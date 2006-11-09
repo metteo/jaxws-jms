@@ -36,7 +36,7 @@
     <property file="etc/build.properties" />
     <property name="build.home" value="${basedir}/build"/>
     <property name="build.classes.home" value="${build.home}/classes"/>
-    <property name="build.war.home" value="${build.home}/war"/>
+    <property name="build.jar.home" value="${build.home}/jar"/>
 
     <path id="jaxws.classpath">
         <pathelement location="${java.home}/../lib/tools.jar"/>
@@ -63,7 +63,7 @@
     <target name="setup">
         <mkdir dir="${build.home}"/>
         <mkdir dir="${build.classes.home}"/>
-        <mkdir dir="${build.war.home}"/>
+        <mkdir dir="${build.jar.home}"/>
     </target>
 
     <target name="clean">
@@ -72,45 +72,43 @@
 
     <target name="build-server-wsdl" depends="setup">
         <wsimport
-            debug="${debug}"
-            verbose="${verbose}"
-            keep="${keep}"
-            extension="${extension}"
-            destdir="${build.classes.home}"
-            wsdl="${server.wsdl}">
-            <binding dir="${basedir}/etc" includes="${server.binding}"/>
+                debug="${debug}"
+                verbose="${verbose}"
+                keep="${keep}"
+                extension="${extension}"
+                destdir="${build.classes.home}"
+                package="fromwsdl.server"
+                wsdl="${server.wsdl}">
         </wsimport>
         <javac
-            fork="true"
-            srcdir="${basedir}/src"
-            destdir="${build.classes.home}"
-            includes="**/server/**,**/common/**">
+                fork="true"
+                srcdir="${basedir}/src"
+                destdir="${build.classes.home}"
+                includes="**/server/**,**/common/**">
             <classpath refid="jaxws.classpath"/>
         </javac>
     </target>
 
-    <target name="create-war">
-        <war warfile="${build.war.home}/jaxws-${ant.project.name}.war" webxml="etc/web.xml">
-    	      <webinf dir="${basedir}/etc" includes="sun-jaxws.xml"/>
-    	      <zipfileset
-                dir="${basedir}/etc"
-                includes="*.wsdl, *.xsd"
-                prefix="WEB-INF/wsdl"/>
-    	      <classes dir="${build.classes.home}"/>
-        </war>
+    <target name="create-jar">
+        <jar jarfile="${build.jar.home}/jaxws-${ant.project.name}.jar">
+              <metainf dir="${basedir}/etc" includes="ejb-jar.xml,sun-ejb-jar.xml"/>
+    	      <zipfileset dir="${basedir}/etc" includes="*.wsdl, *.xsd" prefix="WEB-INF/wsdl"/>
+    	      <zipfileset dir="${basedir}/etc" includes="sun-jaxws.xml" prefix="WEB-INF"/>
+    	      <zipfileset dir="${build.classes.home}"/>
+        </jar>
     </target>
 
-    <target name="rebuild-server" depends="clean, build-server-wsdl, create-war"/>
+    <target name="rebuild-server" depends="clean, build-server-wsdl, create-jar"/>
 
     <target name="generate-client" depends="setup">
         <wsimport
-            debug="${debug}"
-            verbose="${verbose}"
-            keep="${keep}"
-            extension="${extension}"
-            destdir="${build.classes.home}"
-            wsdl="${client.wsdl}">
-            <binding dir="${basedir}/etc" includes="${client.binding}"/>
+                debug="${debug}"
+                verbose="${verbose}"
+                keep="${keep}"
+                extension="${extension}"
+                destdir="${build.classes.home}"
+                package="fromwsdl.client"
+                wsdl="${client.wsdl}">
         </wsimport>
     </target>
 
@@ -147,7 +145,7 @@
                 <path refid="j2ee.classpath"/>
                 <pathelement location="${build.classes.home}"/>
                 <pathelement location="${basedir}/etc"/>
-		<pathelement location="${build.war.home}/jaxws-${ant.project.name}.war"/>
+		<pathelement location="${build.jar.home}/jaxws-${ant.project.name}.jar"/>
             </classpath>
         </java>
     </target>
@@ -165,7 +163,7 @@
 
         <antcall target="build-server-wsdl" />
 
-        <antcall target="create-war" />
+        <antcall target="create-jar" />
     </target>
 
 </project>
