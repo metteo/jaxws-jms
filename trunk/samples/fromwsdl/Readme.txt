@@ -7,8 +7,7 @@ fromwsdl sample demonstrates the WSDL->Java programming model.
     * AddNumbers.wsdl wsdl file
     * custom-client.xml client customization file
     * custom-server.xml server customization file
-    * build.properties, deploy-targets.xml ant script to deploy the endpoint
-      war file
+    * build.properties, deploy-targets.xml ant script to deploy the endpoint jar file
     * sun-jaxws.xml deployment WS descriptor
     * /META-INF/services/com.sun.xml.ws.api.pipe.TransportPipeFactory transport pipe config file
 * src source files
