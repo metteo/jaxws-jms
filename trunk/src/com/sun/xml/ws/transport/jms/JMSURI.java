@@ -31,12 +31,12 @@ import java.util.Map;
  * @author Alexey Stashok
  */
 public class JMSURI {
-    public String host;
-    public int port;
-    public String factory;
-    public String queue;
-    private Map<String, String> params;
-    private String uri2string;
+    public final String host;
+    public final int port;
+    public final String factory;
+    public final String queue;
+    private final Map<String, String> params;
+    private final String uri2string;
     
     private JMSURI(String host, int port, String factory, String queue, 
                    Map<String, String> params, String uri2string) {
