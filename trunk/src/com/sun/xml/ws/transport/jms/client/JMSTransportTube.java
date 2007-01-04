@@ -22,17 +22,16 @@
 
 package com.sun.xml.ws.transport.jms.client;
 
-import com.sun.xml.ws.api.WSBinding;
+import com.sun.istack.NotNull;
 import com.sun.xml.ws.api.message.Packet;
-import com.sun.xml.ws.api.pipe.ClientPipeAssemblerContext;
 import com.sun.xml.ws.api.pipe.Codec;
 import com.sun.xml.ws.api.pipe.ContentType;
-import com.sun.xml.ws.api.pipe.Pipe;
-import com.sun.xml.ws.api.pipe.PipeCloner;
+import com.sun.xml.ws.api.pipe.NextAction;
+import com.sun.xml.ws.api.pipe.TubeCloner;
+import com.sun.xml.ws.api.pipe.helper.AbstractTubeImpl;
 import com.sun.xml.ws.transport.jms.JMSConstants;
 
 import javax.xml.ws.WebServiceException;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -42,64 +41,65 @@ import java.util.Map;
 /**
  * @author Alexey Stashok
  */
-public class JMSTransportPipe implements Pipe {    
-    final protected ClientPipeAssemblerContext pipeAssemblerContext;
+public class JMSTransportTube extends AbstractTubeImpl {
+    private final Codec codec;
     
-    public JMSTransportPipe(ClientPipeAssemblerContext context) {
-        this.pipeAssemblerContext = context;
+    public JMSTransportTube(Codec codec) {
+        this.codec = codec;
     }
     
-    protected JMSTransportPipe(JMSTransportPipe that, PipeCloner cloner) {
-        this(that.pipeAssemblerContext);
-        cloner.add(that, this);
+    protected JMSTransportTube(JMSTransportTube that, TubeCloner cloner) {
+        super(that,cloner);
+        this.codec = that.codec.copy();
     }
     
     public void preDestroy() {
     }
-    
-    public Pipe copy(PipeCloner cloner) {
-        return new JMSTransportPipe(this, cloner);
+
+    public JMSTransportTube copy(TubeCloner cloner) {
+        return new JMSTransportTube(this,cloner);
     }
-    
-    public Packet process(Packet packet) {
+
+
+    @NotNull
+    public NextAction processRequest(@NotNull Packet request) {
         ByteArrayInputStream replyPacketInStream = null;
         ByteArrayOutputStream requestPacketOutStream = null;
-        
+
         try {
-            Codec codec = pipeAssemblerContext.getCodec();
             // get transport headers from message
-            Map<String, String> reqHeaders = (Map<String, String>) packet.invocationProperties.get(JMSConstants.JMS_REQUEST_HEADERS);
+            Map<String, String> reqHeaders = (Map<String, String>) request.invocationProperties.get(JMSConstants.JMS_REQUEST_HEADERS);
             //assign empty map if its null
             if(reqHeaders == null){
                 reqHeaders = new HashMap<String, String>();
             }
-            
-            JMSClientTransport con = new JMSClientTransport(packet, reqHeaders);
-            
-            ContentType ct = codec.getStaticContentType(packet);
+
+            JMSClientTransport con = new JMSClientTransport(request, reqHeaders);
+
+            ContentType ct = codec.getStaticContentType(request);
             requestPacketOutStream = new ByteArrayOutputStream();
-            ContentType dynamicCT = codec.encode(packet, requestPacketOutStream);
+            ContentType dynamicCT = codec.encode(request, requestPacketOutStream);
             if (ct == null) {
                 // data size is available, set it as Content-Length
                 ct = dynamicCT;
             }
-            
+
             reqHeaders.put(JMSConstants.CONTENT_TYPE_PROPERTY, ct.getContentType());
-            reqHeaders.put(JMSConstants.TARGET_URI_PROPERTY, packet.endpointAddress.getURI().toASCIIString());
-            
+            reqHeaders.put(JMSConstants.TARGET_URI_PROPERTY, request.endpointAddress.getURI().toASCIIString());
+
             byte[] rplPacket = con.sendMessage(requestPacketOutStream.toByteArray());
-            
+
             if(!con.isPayloadExist()) {
-                return packet.createClientResponse(null);    // one way. null response given.
+                return doReturnWith(request.createClientResponse(null));    // one way. null response given.
             }
-            
+
             Map<String, String> respHeaders = con.getHeaders();
             String contentTypeStr = getContentType(respHeaders);
-            
-            Packet reply = packet.createClientResponse(null);
+
+            Packet reply = request.createClientResponse(null);
             replyPacketInStream = new ByteArrayInputStream(rplPacket);
             codec.decode(replyPacketInStream, contentTypeStr, reply);
-            return reply;
+            return doReturnWith(reply);
         } catch(WebServiceException wex) {
             throw wex;
         } catch(Exception ex) {
@@ -112,7 +112,7 @@ public class JMSTransportPipe implements Pipe {
                 } catch (IOException ex) {
                 }
             }
-            
+
             if (replyPacketInStream != null) {
                 try {
                     replyPacketInStream.close();
@@ -121,7 +121,18 @@ public class JMSTransportPipe implements Pipe {
             }
         }
     }
-    
+
+
+    @NotNull
+    public NextAction processResponse(@NotNull Packet response) {
+        throw new AssertionError();
+    }
+
+    @NotNull
+    public NextAction processException(@NotNull Throwable t) {
+        throw new AssertionError();
+    }
+
     private String getContentType(Map<String, String> headers) {
         String key = headers.get(JMSConstants.CONTENT_TYPE_PROPERTY);
         if (key == null) {

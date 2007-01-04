@@ -60,13 +60,13 @@ public class JMSClientTransport {
     
     byte[] sendMessage(byte[] sndPacket) {
         InitialContext ic = null;
-        ConnectionFactory connectionFactory = null;
-        Queue dest = null;
+        ConnectionFactory connectionFactory;
+        Queue dest;
         Connection connection = null;
         Session session = null;
-        MessageProducer producer = null;
-        MessageConsumer consumer = null;
-        BytesMessage message = null;
+        MessageProducer producer;
+        MessageConsumer consumer;
+        BytesMessage message;
         
         URI uri = packet.endpointAddress.getURI();
         JMSURI destinationAddress = JMSURI.parse(uri);
@@ -85,7 +85,7 @@ public class JMSClientTransport {
                 cachedConnectionRecord = new JMSConnectionCache.JMSConnectionRecord(ic);
                 connectionCache.putJMSConnectionRecord(jmsConnectionAddress, cachedConnectionRecord);
             } catch (NamingException e) {
-                throw new ClientTransportException("jms.client.failed", e);
+                throw new JMSTransportException(e);
             }
         }
         
@@ -103,7 +103,7 @@ public class JMSClientTransport {
                 cachedConnectionRecord.putQueue(destinationAddress.queue, dest);
             }
         } catch (NamingException e) {
-            throw new ClientTransportException("jms.client.failed", e);
+            throw new JMSTransportException("Failed to obtain queue "+destinationAddress, e);
         }
         
         try {
@@ -126,17 +126,17 @@ public class JMSClientTransport {
                 BytesMessage bmReplyMessage = (BytesMessage) replyMessage;
                 populateResponseHeaders(bmReplyMessage);
                 if (JMSUtils.isStatusError(status)) {
-                    throw new ClientTransportException("jms.status.code", status);
+                    throw new JMSTransportException("Error response received "+status);
                 }
                 
                 if (isPayloadExist()) {
                     byte[] buffer = new byte[(int) bmReplyMessage.getBodyLength()];
-                    ((BytesMessage) bmReplyMessage).readBytes(buffer);
+                    bmReplyMessage.readBytes(buffer);
                     return buffer;
                 }
             }
         } catch (JMSException e) {
-            throw new ClientTransportException("jms.client.failed", e);
+            throw new JMSTransportException("Error getting a response", e);
         } finally {
             if (session != null) {
                 try {
@@ -167,7 +167,7 @@ public class JMSClientTransport {
     }
     
     private void populateResponseHeaders(Message message) throws JMSException {
-        responseHeaders = new HashMap();
+        responseHeaders = new HashMap<String,String>();
         
         status = message.getIntProperty(JMSConstants.REPLY_STATUS_PROPERTY);
         
