@@ -45,7 +45,7 @@ import javax.naming.NamingException;
 public class JMSStandaloneContext implements JMSContext {
     private ClassLoader classloader;
     private Map<String, Object> attributes = new HashMap();
-    private Set<String> resourcePaths;
+    private transient Set<String> resourcePaths;
     
     private InitialContext jndiContext;
     public JMSStandaloneContext(InitialContext jndiContext,
@@ -75,23 +75,24 @@ public class JMSStandaloneContext implements JMSContext {
     }
     
     public URL getResource(String resource) {
-        if (resource.startsWith("/")) {
-            resource = resource.substring(1, resource.length());
-        }
-        
-        return classloader.getResource(resource);
+        return classloader.getResource(trimRecourcePath(resource));
     }
     
     private Set<String> populateResourcePaths(String path) throws Exception {
-        URL initResource = getResource(path);
-        URI resourceURI = initResource.toURI();
-        if (resourceURI.getScheme().equals("file")) {
-            return gatherResourcesWithFileMode(path, resourceURI);
-        } else if (resourceURI.getScheme().equals("jar")) {
-            return gatherResourcesWithJarMode(path, resourceURI);
-        } else {
-            return Collections.emptySet();
+        Set<String> resourcePathes = new HashSet<String>();
+        
+        Enumeration<URL> urlEnum = classloader.getResources(trimRecourcePath(path));
+        while(urlEnum.hasMoreElements()) {
+            URI resourceURI = urlEnum.nextElement().toURI();
+            
+            if (resourceURI.getScheme().equals("file")) {
+                resourcePathes.addAll(gatherResourcesWithFileMode(path, resourceURI));
+            } else if (resourceURI.getScheme().equals("jar")) {
+                resourcePathes.addAll(gatherResourcesWithJarMode(path, resourceURI));
+            }
         }
+        
+        return resourcePathes;
     }
     
     private Set<String> gatherResourcesWithFileMode(String path, URI resourceURI) {
@@ -164,5 +165,13 @@ public class JMSStandaloneContext implements JMSContext {
 
     public Object lookup(String name) throws NamingException {
         return jndiContext.lookup(name);
+    }
+    
+    private String trimRecourcePath(String resource) {
+        if (resource.startsWith("/")) {
+            resource = resource.substring(1, resource.length());
+        }
+        
+        return resource;
     }
 }
