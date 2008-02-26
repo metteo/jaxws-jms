@@ -23,7 +23,6 @@
 package com.sun.xml.ws.transport.jms.client;
 
 import com.sun.xml.ws.api.message.Packet;
-import com.sun.xml.ws.client.ClientTransportException;
 import com.sun.xml.ws.transport.jms.JMSConstants;
 import com.sun.xml.ws.transport.jms.JMSURI;
 import com.sun.xml.ws.transport.jms.JMSUtils;
