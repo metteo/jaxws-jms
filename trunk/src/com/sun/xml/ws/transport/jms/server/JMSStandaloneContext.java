@@ -113,7 +113,14 @@ public class JMSStandaloneContext implements JMSContext {
     private Set<String> gatherResourcesWithJarMode(String path, URI resourceURI) {
         String resourceURIAsString = resourceURI.toASCIIString();
         int pathDelim = resourceURIAsString.indexOf("!");
-        String zipFile = resourceURIAsString.substring("jar:file:/".length(), (pathDelim != -1) ? pathDelim : resourceURIAsString.length());
+        
+        String zipFile;
+
+        if (File.separatorChar == '/') {
+            zipFile = resourceURIAsString.substring("jar:file:".length(), (pathDelim != -1) ? pathDelim : resourceURIAsString.length());
+        } else {
+            zipFile = resourceURIAsString.substring("jar:file:/".length(), (pathDelim != -1) ? pathDelim : resourceURIAsString.length());
+        }
         ZipFile file = null;
         
         Set<String> resources = new HashSet();
