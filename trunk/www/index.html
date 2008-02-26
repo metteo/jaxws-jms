@@ -80,9 +80,9 @@ soap:address for the AddNumbersPort of the AddNumbersService: </P>
 <P>The location attribute value is a URL whose scheme is "x-jms".
 This informs the JAX-WS client runtime that the JMS client transport
 should be used.
-The sample client includes in its class path a file in the META-INF/services directory called <A href="https://jms-ws-transport.dev.java.net/source/browse/jms-ws-transport/samples/fromwsdl/etc/META-INF/services/com.sun.xml.ws.api.pipe.TransportPipeFactory?view=markup">com.sun.xml.ws.api.pipe.TransportPipeFactory</A>.
-This file contains the class of the JMS transport component, <A href="https://jms-ws-transport.dev.java.net/source/browse/jms-ws-transport/src/com/sun/xml/ws/transport/jms/client/JMSTransportPipeFactory.java?view=markup">com.sun.xml.ws.transport.jms.client.JMSTransportPipeFactory</A>.
-The inclusion of this file registers the JMS transport factory with the JAX-WS client runtime. The factory knows about the 'x-jms' URL scheme and is responsible for instantiating a JMS transport pipe.
+The sample client includes in its class path a file in the META-INF/services directory called <A href="https://jms-ws-transport.dev.java.net/source/browse/jms-ws-transport/samples/fromwsdl/etc/META-INF/services/com.sun.xml.ws.api.pipe.TransportTubeFactory?view=markup">com.sun.xml.ws.api.pipe.TransportTubeFactory</A>.
+This file contains the class of the JMS transport component, <A href="https://jms-ws-transport.dev.java.net/source/browse/jms-ws-transport/src/com/sun/xml/ws/transport/jms/client/JMSTransportTubeFactory.java?view=markup">com.sun.xml.ws.transport.jms.client.JMSTransportTubeFactory</A>.
+The inclusion of this file registers the JMS transport factory with the JAX-WS client runtime. The factory knows about the 'x-jms' URL scheme and is responsible for instantiating a JMS transport tube.
 </P>
 
 <P>The URL for the JMS transport has the following structure:</P>
