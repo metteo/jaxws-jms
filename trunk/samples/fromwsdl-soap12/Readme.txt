@@ -19,9 +19,11 @@ fromwsdl-soap12 sample demonstrates the WSDL->Java programming model using SOAP1
       and exception class - AddNumbersFault_Exception
 
 * To run
-    * using GlassFish admin console create following JMS artifacts:
-      JMS Factory: jaxwsfactory
-      JMS Queue: fromwsdlsoap12Q
+    * create required JMS artifacts.
+      * You can use create-jms-resorces.sh script or
+      * using GlassFish admin console create following JMS artifacts:
+            JMS Factory: jaxwsfactory
+            JMS Queue: fromwsdlsoap12Q
     * ant server - runs wsimport to compile AddNumbers.wsdl and generate
       server side artifacts and does the deployment
     * ant client - runs wsimport on the published wsdl by the deployed
