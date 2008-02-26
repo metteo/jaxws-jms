@@ -56,6 +56,7 @@ public class JMSURI {
         return null;
     }
     
+    @Override
     public String toString() {
         return uri2string;
     }
