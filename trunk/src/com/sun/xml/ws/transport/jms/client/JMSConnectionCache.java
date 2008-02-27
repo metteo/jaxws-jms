@@ -34,7 +34,7 @@ import javax.naming.InitialContext;
 
 public class JMSConnectionCache {
     
-    private Map<String, JMSConnectionRecord> cache = new HashMap();
+    private final Map<String, JMSConnectionRecord> cache = new HashMap();
     
     public JMSConnectionCache() {
     }
