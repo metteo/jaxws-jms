@@ -45,7 +45,7 @@ import javax.naming.NamingException;
 public class JMSStandaloneContext implements JMSContext {
     private ClassLoader classloader;
     private Map<String, Object> attributes = new HashMap();
-    private transient Set<String> resourcePaths;
+    private volatile Set<String> resourcePaths;
     
     private InitialContext jndiContext;
     public JMSStandaloneContext(InitialContext jndiContext,
