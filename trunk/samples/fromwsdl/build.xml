@@ -40,7 +40,7 @@
 
     <path id="jaxws.classpath">
         <pathelement location="${java.home}/../lib/tools.jar"/>
-        <pathelement location="${lib.sample.home}/jaxwsSampleUtils.jar"/>
+	<pathelement location="/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Classes/classes.jar"/>
         <fileset dir="${lib.home}/jaxws">
             <include name="*.jar" />
         </fileset>
@@ -125,7 +125,7 @@
         </copy>
     </target>
 
-    <target name="run-client">
+    <target name="run-client" depends="client">
         <java fork="true" classname="${client}">
             <classpath>
                 <path refid="jaxws.classpath"/>
@@ -137,7 +137,7 @@
         </java>
     </target>
 
-    <target name="run-service">
+    <target name="run-service" depends="server">
         <java fork="true" classname="${standalone-server}">
             <classpath>
                 <path refid="jaxws.classpath"/>
@@ -153,7 +153,7 @@
     <target name="help">
         <echo message="server:       Builds and deploy the service endpoint WAR"/>
         <echo message="client:       Builds the client"/>
-        <echo message="run:          Runs the client"/>
+        <echo message="run-client:   Runs the client"/>
     </target>
 
 
