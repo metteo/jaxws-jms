@@ -41,7 +41,7 @@ To do so you need:
 
 Troubleshooting:
 
-Issue https://glassfish.dev.java.net/issues/show_bug.cgi?id=4051 can bug you; in that case, modify domain.xml so that the orb-listener is not at 0.0.0.0 but at the IP address the client sees. 
+Issue http://java.net/jira/browse/GLASSFISH-4051 can bug you; in that case, modify domain.xml so that the orb-listener is not at 0.0.0.0 but at the IP address the client sees. 
 
 If the client doesn't canoot resolve the hostname of the glassfish server, add this hostname to your hosts file.
 
