@@ -176,9 +176,10 @@ public class JMSConnectionImpl implements WebServiceContextDelegate {
         }
         
         Session jmsSession = null;
+        Connection connection = null;
         try {
             ConnectionFactory connectionFactory = (ConnectionFactory) context.lookup(uri.factory);
-            Connection connection = connectionFactory.createConnection();
+            connection = connectionFactory.createConnection();
             jmsSession = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         } catch (NamingException ex) {
             throw new JMSException("NamingException: " + ex.getMessage());
@@ -203,7 +204,7 @@ public class JMSConnectionImpl implements WebServiceContextDelegate {
             Queue replyQueue = (Queue) requestMessage.getJMSReplyTo();
             jmsSession.createProducer(replyQueue).send(replyMessage);
         } finally {
-            jmsSession.close();
+            connection.close();
         }
     }
     
