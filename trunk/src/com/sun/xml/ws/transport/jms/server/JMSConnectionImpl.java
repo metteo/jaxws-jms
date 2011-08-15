@@ -38,6 +38,7 @@ import java.security.Principal;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -61,7 +62,7 @@ public class JMSConnectionImpl implements WebServiceContextDelegate {
     
     private int status;
     
-    private boolean isClosed;
+    private final AtomicBoolean isClosed = new AtomicBoolean();
     
     private Map<String, String> requestHeaders;
     private Map<String, String> responseHeaders;
@@ -140,15 +141,9 @@ public class JMSConnectionImpl implements WebServiceContextDelegate {
     }
     
     public void close() {
-        if (!isClosed) {
-            synchronized (this) {
-                if (!isClosed) {
-                    isClosed = true;
-                    
-                    closeInput();
-                    closeOutput();
-                }
-            }
+        if (isClosed.compareAndSet(false, true)) {
+            closeInput();
+            closeOutput();
         }
     }
     
