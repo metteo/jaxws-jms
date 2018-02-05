@@ -1,66 +1,73 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  
-  <groupId>org.jvnet.jms-ws-transport</groupId>
-  <artifactId>jms-ws-transport</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
-  
-  <name>JMS transport for JAX-WS</name>
-  <description>Allows JAX-WS to send/receive messages with JMS</description>
-  
-  <scm>
-    <connection>scm:cvs:cvs.dev.java.net:/cvs:jms-ws-transport</connection>
-    <url>https://jms-ws-transport.dev.java.net/source/browse/jms-ws-transport</url>
-  </scm>
-  
-  <repositories>
-    <repository>
-      <id>java.net</id>
-      <url>https://maven-repository.dev.java.net/nonav/repository</url>
-      <layout>legacy</layout>
-    </repository>
-    <repository>
-      <id>java.net2</id>
-      <url>https://maven2-repository.dev.java.net/nonav/repository</url>
-    </repository>
-  </repositories>
-  
-  <build>
-    <sourceDirectory>src</sourceDirectory>
-    <plugins>
-      <plugin>
-        <artifactId>maven-idea-plugin</artifactId>
-        <configuration>
-          <downloadSources>true</downloadSources>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  
-  <dependencies>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.jvnet.jms-ws-transport</groupId>
+	<artifactId>jms-ws-transport</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>JMS transport for JAX-WS</name>
+	<description>Allows JAX-WS to send/receive messages with JMS</description>
+
+	<scm>
+		<connection>scm:cvs:cvs.dev.java.net:/cvs:jms-ws-transport</connection>
+		<url>https://jms-ws-transport.dev.java.net/source/browse/jms-ws-transport</url>
+	</scm>
+
+	<repositories>
+		<repository>
+			<id>java.net</id>
+			<url>https://maven-repository.dev.java.net/nonav/repository</url>
+			<layout>legacy</layout>
+		</repository>
+		<repository>
+			<id>java.net2</id>
+			<url>https://maven2-repository.dev.java.net/nonav/repository</url>
+		</repository>
+	</repositories>
+
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>res</directory>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<artifactId>maven-idea-plugin</artifactId>
+				<configuration>
+					<downloadSources>true</downloadSources>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
 		<dependency>
-		    <groupId>javax.ejb</groupId>
-		    <artifactId>javax.ejb-api</artifactId>
-		    <version>3.2</version>
+			<groupId>javax.ejb</groupId>
+			<artifactId>javax.ejb-api</artifactId>
+			<version>3.2</version>
 		</dependency>
 		<dependency>
-		    <groupId>com.sun.xml.ws</groupId>
-		    <artifactId>jaxws-rt</artifactId>
-		    <version>2.2.10</version>
+			<groupId>com.sun.xml.ws</groupId>
+			<artifactId>jaxws-rt</artifactId>
+			<version>2.2.10</version>
 		</dependency>
 		<dependency>
-		    <groupId>javax.jms</groupId>
-		    <artifactId>javax.jms-api</artifactId>
-		    <version>2.0</version>
+			<groupId>javax.jms</groupId>
+			<artifactId>javax.jms-api</artifactId>
+			<version>2.0</version>
 		</dependency>
-  </dependencies>
+	</dependencies>
 </project>
